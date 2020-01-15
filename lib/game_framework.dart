@@ -7,26 +7,39 @@ class Game {
   int score;
   String setType;
 
-  Game(var jsonData, ) {
-    setType = "person";
+  Game(
+    var jsonData,
+  ) {
+    setType = "bruh";
     remaining = jsonToList(jsonData); //TODO: implement lazy loaded data
     score = 0;
   }
 
-  List<Individual> jsonToList(jsonData, ){
-    var ret = new List();
-    for (var item in jsonData){
-      ret.add(Individual(item['name'], item['img']));
-    }
-
-    return ret;
+  List<Individual> jsonToList(jsonData) {
+    var l = json.decode(jsonData);
+    setType = l[0];
+    return l[setType]
+        .map<Individual>((jsonObject) => Individual.fromJson(jsonObject))
+        .toList();
   }
 }
 
 class Individual {
   String name;
-  String img;
+  String imagePath;
 
-  Individual(this.name, this.img);
+  Individual(this.name, this.imagePath);
+
+  factory Individual.fromJson(Map<String, dynamic> jsonObject) {
+    return Individual(jsonObject["name"], jsonObject["img"]);
+  }
+
+  String getName(){
+    return name;
+  }
+
+  String getPath(){
+    return imagePath;
+  }
 
 }
