@@ -1,4 +1,4 @@
-# flutter_whoiswho
+# flutter-whoiswho
 
 A new Flutter project.
 
