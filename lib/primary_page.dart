@@ -11,6 +11,11 @@ List<Alignment> cardsAlign = [
   Alignment(0.0, 0.0)
 ];
 List<Size> cardsSize = List(3);
+List<List<bool>> cardProps = [
+  [false, true],
+  [false, true],
+  [false, true],
+];
 
 class HomeScreen extends StatefulWidget {
   HomeScreen(BuildContext context) {
@@ -27,7 +32,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   Game game;
 
   List<WhoIsCard> cards = List();
@@ -46,10 +51,9 @@ class _HomeScreenState extends State<HomeScreen>
     List<Individual> firstFew = game.getFirstFew(cardsSize.length);
 
     //Init cards
-    for (Individual individual in firstFew) {
-      cards.add(WhoIsCard(individual));
-    }
-    cards[0].makeVisible(); //Make the top card visible
+    for (int i = 0; i < firstFew.length; i++) {
+      cards.add(WhoIsCard(individual: firstFew[i], position: i));
+    } //Make the top card visible
 
     topCardAlign = cardsAlign[2];
 
@@ -98,7 +102,9 @@ class _HomeScreenState extends State<HomeScreen>
                       //When releasing the first card
                       //If the front card was swiped far enough to count as swiped
                       if (topCardAlign.x > 3.0 || topCardAlign.x < -3.0) {
-                        animateCards();
+                        setState(() {
+                          animateCards();
+                        });
                       } else {
                         //Otherwise go back to initial rotation and alignment
                         setState(() {
@@ -157,11 +163,14 @@ class _HomeScreenState extends State<HomeScreen>
 
   void refreshCards() {
     setState(() {
+      print("refreshing cards...");
+      var temp = cards[0];
       cards[0] = cards[1];
-      cards[1] = cards[2];
-      cards[2] = WhoIsCard(game.next(false));
+      cards[0].position = 0;
 
-      cards[0].makeVisible(); //Make the top card visible
+      cards[1] = cards[2];
+      cards[1].position = 1;
+      cards[2] = WhoIsCard(individual: game.next(false), position: 2);
 
       //Reset alignments
       topCardAlign = defaultTopCardAlign;
@@ -170,9 +179,13 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void animateCards() {
+    print("animating cards...");
     _controller.stop();
+
+    print("animation stop...");
     _controller.value = 0.0;
     _controller.forward();
+    print("animation forward...");
   }
 
   Widget buttonsRow() {
