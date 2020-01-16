@@ -1,5 +1,8 @@
+
 import 'dart:convert';
 import 'dart:core';
+
+import 'package:flutter_whoiswho/data.dart';
 
 class Game {
   List<Individual> remaining;
@@ -7,15 +10,13 @@ class Game {
   int score;
   String setType;
 
-  Game(var jsonData) {
-    setType = "bruh";
-    remaining = jsonToList(jsonData); //TODO: implement lazy loaded data
+  Game() {
+    remaining = jsonToList(data.jsonData); //TODO: implement lazy loaded data
     score = 0;
   }
 
   List<Individual> jsonToList(jsonData) {
-    var l = json.decode(jsonData);
-    return l
+    return jsonData["famous_people"] //TODO: rework to be compatible with any name
         .map<Individual>((jsonObject) => Individual.fromJson(jsonObject))
         .toList();
   }
@@ -55,7 +56,7 @@ class Individual {
   Individual(this.name, this.imagePath);
 
   factory Individual.fromJson(Map<String, dynamic> jsonObject) {
-    return Individual(jsonObject["name"], jsonObject["img"]);
+    return Individual(jsonObject["name"].toString(), jsonObject["img"].toString());
   }
 
   String getName() {
