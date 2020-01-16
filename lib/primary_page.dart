@@ -1,0 +1,254 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_whoiswho/card.dart';
+import 'game_framework.dart';
+import 'dart:math';
+
+List<Alignment> cardsAlign = [
+  Alignment(0.0, 1.0),
+  Alignment(0.0, 0.8),
+  Alignment(0.0, 0.0)
+];
+List<Size> cardsSize = List(3);
+
+class HomeScreen extends StatefulWidget {
+  HomeScreen(BuildContext context) {
+    cardsSize[0] = Size(MediaQuery.of(context).size.width * 0.9,
+        MediaQuery.of(context).size.height * 0.6);
+    cardsSize[1] = Size(MediaQuery.of(context).size.width * 0.85,
+        MediaQuery.of(context).size.height * 0.55);
+    cardsSize[2] = Size(MediaQuery.of(context).size.width * 0.8,
+        MediaQuery.of(context).size.height * 0.5);
+  }
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  Game game;
+
+  List<WhoIsCard> cards = List();
+  AnimationController _controller;
+
+  final Alignment defaultTopCardAlign = Alignment(0.0, 0.0);
+  Alignment topCardAlign;
+  double topCardRot = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    //Init the game
+    game = Game();
+    //Get the first few cards
+    List<Individual> firstFew = game.getFirstFew(cardsSize.length);
+
+    //Init cards
+    for (Individual individual in firstFew) {
+      cards.add(WhoIsCard(individual));
+    }
+    cards[0].makeVisible(); //Make the top card visible
+
+    topCardAlign = cardsAlign[2];
+
+    //Init the animation controller
+    _controller =
+        AnimationController(duration: Duration(milliseconds: 700), vsync: this);
+    _controller.addListener(() => setState(() {}));
+    _controller.addStatusListener((AnimationStatus status) {
+      if (status == AnimationStatus.completed) refreshCards();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Expanded(
+            child: Stack(
+          children: <Widget>[
+            backCard(),
+            middleCard(),
+            topCard(),
+
+            // Prevent swiping if the cards are animating
+            _controller.status != AnimationStatus.forward
+                ? SizedBox.expand(
+                    child: GestureDetector(
+                    onPanUpdate: (DragUpdateDetails details) {
+                      //While dragging the first card,
+                      //Add what the user swiped in the last frame to the alignment of the card
+                      setState(() {
+                        topCardAlign = Alignment(
+                            topCardAlign.x +
+                                20 *
+                                    details.delta.dx /
+                                    MediaQuery.of(context).size.width,
+                            topCardAlign.y +
+                                40 *
+                                    details.delta.dy /
+                                    MediaQuery.of(context).size.height);
+
+                        topCardRot = topCardAlign.x;
+                      });
+                    },
+                    onPanEnd: (_) {
+                      //When releasing the first card
+                      //If the front card was swiped far enough to count as swiped
+                      if (topCardAlign.x > 3.0 || topCardAlign.x < -3.0) {
+                        animateCards();
+                      } else {
+                        //Otherwise go back to initial rotation and alignment
+                        setState(() {
+                          topCardAlign = defaultTopCardAlign;
+                          topCardRot = 0.0;
+                        });
+                      }
+                    },
+                  ))
+                : Container()
+          ],
+        )),
+        buttonsRow()
+      ],
+    );
+  }
+
+  Widget backCard() {
+    return Align(
+      alignment: _controller.status == AnimationStatus.forward
+          ? CardsAnimation.backCardAlignmentAnim(_controller).value
+          : cardsAlign[0],
+      child: SizedBox.fromSize(
+          size: _controller.status == AnimationStatus.forward
+              ? CardsAnimation.backCardSizeAnim(_controller).value
+              : cardsSize[2],
+          child: cards[2]),
+    );
+  }
+
+  Widget middleCard() {
+    return Align(
+      alignment: _controller.status == AnimationStatus.forward
+          ? CardsAnimation.middleCardAlignmentAnim(_controller).value
+          : cardsAlign[1],
+      child: SizedBox.fromSize(
+          size: _controller.status == AnimationStatus.forward
+              ? CardsAnimation.middleCardSizeAnim(_controller).value
+              : cardsSize[1],
+          child: cards[1]),
+    );
+  }
+
+  Widget topCard() {
+    return Align(
+        alignment: _controller.status == AnimationStatus.forward
+            ? CardsAnimation.topCardDisappearAlignmentAnim(
+                    _controller, topCardAlign)
+                .value
+            : topCardAlign,
+        child: Transform.rotate(
+          angle: (pi / 180.0) * topCardRot,
+          child: SizedBox.fromSize(size: cardsSize[0], child: cards[0]),
+        ));
+  }
+
+  void refreshCards() {
+    setState(() {
+      cards[0] = cards[1];
+      cards[1] = cards[2];
+      cards[2] = WhoIsCard(game.next(false));
+
+      cards[0].makeVisible(); //Make the top card visible
+
+      //Reset alignments
+      topCardAlign = defaultTopCardAlign;
+      topCardRot = 0.0;
+    });
+  }
+
+  void animateCards() {
+    _controller.stop();
+    _controller.value = 0.0;
+    _controller.forward();
+  }
+
+  Widget buttonsRow() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 48.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          FloatingActionButton(
+            mini: true,
+            onPressed: () {},
+            backgroundColor: Colors.white,
+            child: Icon(Icons.loop, color: Colors.yellow),
+          ),
+          Padding(padding: EdgeInsets.only(right: 8.0)),
+          FloatingActionButton(
+            onPressed: () {},
+            backgroundColor: Colors.white,
+            child: Icon(Icons.close, color: Colors.red),
+          ),
+          Padding(padding: EdgeInsets.only(right: 8.0)),
+          FloatingActionButton(
+            onPressed: () {},
+            backgroundColor: Colors.white,
+            child: Icon(Icons.favorite, color: Colors.green),
+          ),
+          Padding(padding: EdgeInsets.only(right: 8.0)),
+          FloatingActionButton(
+            mini: true,
+            onPressed: () {},
+            backgroundColor: Colors.white,
+            child: Icon(Icons.star, color: Colors.blue),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CardsAnimation {
+  static Animation<Alignment> backCardAlignmentAnim(
+      AnimationController parent) {
+    return AlignmentTween(begin: cardsAlign[0], end: cardsAlign[1]).animate(
+        CurvedAnimation(
+            parent: parent, curve: Interval(0.4, 0.7, curve: Curves.easeIn)));
+  }
+
+  static Animation<Size> backCardSizeAnim(AnimationController parent) {
+    return SizeTween(begin: cardsSize[2], end: cardsSize[1]).animate(
+        CurvedAnimation(
+            parent: parent, curve: Interval(0.4, 0.7, curve: Curves.easeIn)));
+  }
+
+  static Animation<Alignment> middleCardAlignmentAnim(
+      AnimationController parent) {
+    return AlignmentTween(begin: cardsAlign[1], end: cardsAlign[2]).animate(
+        CurvedAnimation(
+            parent: parent, curve: Interval(0.2, 0.5, curve: Curves.easeIn)));
+  }
+
+  static Animation<Size> middleCardSizeAnim(AnimationController parent) {
+    return SizeTween(begin: cardsSize[1], end: cardsSize[0]).animate(
+        CurvedAnimation(
+            parent: parent, curve: Interval(0.2, 0.5, curve: Curves.easeIn)));
+  }
+
+  static Animation<Alignment> topCardDisappearAlignmentAnim(
+      AnimationController parent, Alignment beginAlign) {
+    return AlignmentTween(
+            begin: beginAlign,
+            end: Alignment(
+                beginAlign.x > 0 ? beginAlign.x + 30.0 : beginAlign.x - 30.0,
+                0.0) // Has swiped to the left or right?
+            )
+        .animate(CurvedAnimation(
+            parent: parent, curve: Interval(0.0, 0.5, curve: Curves.easeIn)));
+  }
+}

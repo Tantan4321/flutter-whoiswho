@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_whoiswho/game_framework.dart';
+import 'package:flutter_whoiswho/primary_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,9 +27,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Game game;
-  List<Individual> firstFew;
-
   @override
   void initState() {
     super.initState();
@@ -37,56 +34,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   initPlatformState() {
-    game = Game();
 
-    firstFew = game.getFirstFew(3);
 
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
+          elevation: 10.0,
           title: Text('Who is Who'),
         ),
-        body: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(
-                Icons.location_on,
-                color: Colors.grey,
-                size: width * 0.5,
-              ),
-              SizedBox(height: height * 0.1),
-              Row(
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(12.0),
-                    width: width * 0.4,
-                    child: Text(
-                      'Latitude:',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.title,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      "yes",
-                      textAlign: TextAlign.left,
-                      style: Theme.of(context).textTheme.display2,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        floatingActionButton:
-            FloatingActionButton(onPressed: null));
+        backgroundColor: Colors.white,
+        body: HomeScreen(context)
+    );
   }
 
   Image loadImage(String path) {
