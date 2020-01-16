@@ -11,11 +11,6 @@ List<Alignment> cardsAlign = [
   Alignment(0.0, 0.0)
 ];
 List<Size> cardsSize = List(3);
-List<List<bool>> cardProps = [
-  [false, true],
-  [false, true],
-  [false, true],
-];
 
 class HomeScreen extends StatefulWidget {
   HomeScreen(BuildContext context) {
@@ -117,9 +112,16 @@ class _HomeScreenState extends State<HomeScreen>
                 : Container()
           ],
         )),
-        buttonsRow()
+        gameBar()
       ],
     );
+  }
+
+  void flipCard(){
+    setState(() {
+      cards[0].flip();
+    });
+
   }
 
   Widget backCard() {
@@ -167,10 +169,10 @@ class _HomeScreenState extends State<HomeScreen>
       var temp = cards[0];
       cards[0] = cards[1];
       cards[0].position = 0;
-
       cards[1] = cards[2];
       cards[1].position = 1;
       cards[2] = WhoIsCard(individual: game.next(false), position: 2);
+
 
       //Reset alignments
       topCardAlign = defaultTopCardAlign;
@@ -179,49 +181,15 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void animateCards() {
-    print("animating cards...");
     _controller.stop();
-
-    print("animation stop...");
     _controller.value = 0.0;
     _controller.forward();
-    print("animation forward...");
   }
 
-  Widget buttonsRow() {
+  Widget gameBar() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 48.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          FloatingActionButton(
-            mini: true,
-            onPressed: () {},
-            backgroundColor: Colors.white,
-            child: Icon(Icons.loop, color: Colors.yellow),
-          ),
-          Padding(padding: EdgeInsets.only(right: 8.0)),
-          FloatingActionButton(
-            onPressed: () {},
-            backgroundColor: Colors.white,
-            child: Icon(Icons.close, color: Colors.red),
-          ),
-          Padding(padding: EdgeInsets.only(right: 8.0)),
-          FloatingActionButton(
-            onPressed: () {},
-            backgroundColor: Colors.white,
-            child: Icon(Icons.favorite, color: Colors.green),
-          ),
-          Padding(padding: EdgeInsets.only(right: 8.0)),
-          FloatingActionButton(
-            mini: true,
-            onPressed: () {},
-            backgroundColor: Colors.white,
-            child: Icon(Icons.star, color: Colors.blue),
-          ),
-        ],
-      ),
+      child: LinearProgressIndicator(value: 1.0, )
     );
   }
 }

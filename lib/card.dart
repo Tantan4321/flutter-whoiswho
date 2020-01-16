@@ -7,24 +7,29 @@ import 'package:flutter_whoiswho/game_framework.dart';
 class WhoIsCard extends StatefulWidget {
   int position;
   final Individual individual;
+  GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
 
   WhoIsCard({this.individual, this.position});
 
   @override
   _WhoIsCardState createState() => _WhoIsCardState();
 
+  void flip(){
+    cardKey.currentState.toggleCard();
+  }
+
 }
 
 class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin{
   bool visible = false;
-  GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
+
 
   AnimationController controller;
   Animation<double> animation;
 
   @override
   void initState() {
-    controller = AnimationController(duration: const Duration(milliseconds: 200), vsync: this, value: 1.0);
+    controller = AnimationController(duration: const Duration(milliseconds: 100), vsync: this, value: 1.0);
     animation = CurvedAnimation(parent: controller, curve: Curves.easeOut);
     if (widget.position == 0) visible = true;
     if(visible){
@@ -37,19 +42,17 @@ class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin{
   void didUpdateWidget(WhoIsCard oldWidget) {
     if (widget.position == 0) {
       visible = true;
-      //cardKey.currentState.toggleCard();
     }
     if(visible){
       controller.reverse();
     }
-//    if (oldWidget.isFront != widget.isFront) cardKey.currentState.toggleCard();
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   Widget build(BuildContext context) {
     return FlipCard(
-        key: cardKey,
+        key: widget.cardKey,
         flipOnTouch: false,
         back: ClipRRect(
           borderRadius: BorderRadius.circular(20.0),
