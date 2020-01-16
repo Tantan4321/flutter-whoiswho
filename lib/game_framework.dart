@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:core';
-import 'dart:ui';
 
 class Game {
   List<Individual> remaining;
+  List<Individual> displayed;
   int score;
   String setType;
 
@@ -22,6 +22,31 @@ class Game {
         .map<Individual>((jsonObject) => Individual.fromJson(jsonObject))
         .toList();
   }
+
+  int getScore() {
+    return score;
+  }
+
+  Individual next(bool lastCorrect) {
+    var last = displayed.removeLast();
+    if (!lastCorrect) {
+      remaining.insert(0, last);
+    }
+
+    var next = remaining.removeLast();
+    while (displayed.contains(next)) { //If already displayed, get another card
+      remaining.insert(0, next);
+      next = remaining.removeLast();
+    }
+    displayed.insert(0, next);
+    return next;
+  }
+
+  List<Individual> getFirstFew(int num) {
+    var temp = List.generate(num, (index) => remaining.removeLast());
+    displayed = temp.reversed;
+    return temp;
+  }
 }
 
 class Individual {
@@ -34,12 +59,11 @@ class Individual {
     return Individual(jsonObject["name"], jsonObject["img"]);
   }
 
-  String getName(){
+  String getName() {
     return name;
   }
 
-  String getPath(){
+  String getPath() {
     return imagePath;
   }
-
 }
