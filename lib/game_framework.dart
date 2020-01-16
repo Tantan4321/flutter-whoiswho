@@ -7,9 +7,7 @@ class Game {
   int score;
   String setType;
 
-  Game(
-    var jsonData,
-  ) {
+  Game(var jsonData) {
     setType = "bruh";
     remaining = jsonToList(jsonData); //TODO: implement lazy loaded data
     score = 0;
@@ -17,8 +15,7 @@ class Game {
 
   List<Individual> jsonToList(jsonData) {
     var l = json.decode(jsonData);
-    setType = l[0];
-    return l[setType]
+    return l
         .map<Individual>((jsonObject) => Individual.fromJson(jsonObject))
         .toList();
   }
@@ -34,7 +31,8 @@ class Game {
     }
 
     var next = remaining.removeLast();
-    while (displayed.contains(next)) { //If already displayed, get another card
+    while (displayed.contains(next)) {
+      //If already displayed, get another card
       remaining.insert(0, next);
       next = remaining.removeLast();
     }
@@ -44,7 +42,8 @@ class Game {
 
   List<Individual> getFirstFew(int num) {
     var temp = List.generate(num, (index) => remaining.removeLast());
-    displayed = temp.reversed;
+    var tempReversed = temp.reversed;
+    displayed = tempReversed.toList();
     return temp;
   }
 }
