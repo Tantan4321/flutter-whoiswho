@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:math';
 
 import 'package:flutter_whoiswho/data.dart';
 
@@ -19,6 +20,23 @@ class Game {
         .toList();
   }
 
+  List shuffle(List items) {
+    var random = new Random();
+
+    // Go through all elements.
+    for (var i = items.length - 1; i > 0; i--) {
+
+      // Pick a pseudorandom number according to the list length
+      var n = random.nextInt(i + 1);
+
+      var temp = items[i];
+      items[i] = items[n];
+      items[n] = temp;
+    }
+
+    return items;
+  }
+
   int getScore() {
     return score;
   }
@@ -30,6 +48,8 @@ class Game {
     }else{
       score++;
     }
+
+    remaining = shuffle(remaining); //Shuffle the remaining cards
 
     var next = remaining.removeLast();
     while (displayed.contains(next)) {

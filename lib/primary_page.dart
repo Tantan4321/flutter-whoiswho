@@ -99,9 +99,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return GestureDetector(
       onTap: () {
         //User tapped screen, skip timer
-        if (timer.status != AnimationStatus.dismissed) {
+        if (timer.value != 0.0) {
           timer.stop();
           timer.value = 0.0;
+          timerComplete();
         }
       },
       child: Column(
@@ -167,9 +168,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void timerComplete() {
+    _gameBarIndex = 1;
     setState(() {
       cards[0].flip();
-      _gameBarIndex = 1;
     });
   }
 
@@ -214,7 +215,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void refreshCards() {
     setState(() {
-      var temp = cards[0];
       cards[0] = cards[1];
       cards[0].position = 0;
       cards[1] = cards[2];
