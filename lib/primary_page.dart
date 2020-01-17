@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_whoiswho/card.dart';
 import 'package:flutter_whoiswho/fade_indexed_stack.dart';
+import 'package:flutter_whoiswho/score_page.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'game_framework.dart';
 import 'dart:math';
@@ -30,9 +31,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Game game;
+  int counter;
+  bool correct;
 
   int _gameBarIndex = 0;
-  int counter = 0;
   AnimationController timer;
 
   String get timerString {
@@ -51,7 +53,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     //Init the game
-    game = Game();
+    game = new Game();
+    counter = 0;
     //Get the first few cards
     List<Individual> firstFew = game.getFirstFew(cardsSize.length);
 
@@ -93,58 +96,73 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Expanded(
-            child: Stack(
-          children: <Widget>[
-            backCard(),
-            middleCard(),
-            topCard(),
+    return GestureDetector(
+      onTap: () {
+        //User tapped screen, skip timer
+        if (timer.status != AnimationStatus.dismissed) {
+          timer.stop();
+          timer.value = 0.0;
+        }
+      },
+      child: Column(
+        children: <Widget>[
+          Expanded(
+              child: Stack(
+            children: <Widget>[
+              backCard(),
+              middleCard(),
+              topCard(),
 
-            // Prevent swiping if the cards are animating
-            _controller.status != AnimationStatus.forward &&
-                    timer.status == AnimationStatus.dismissed
-                ? SizedBox.expand(
-                    child: GestureDetector(
-                    onPanUpdate: (DragUpdateDetails details) {
-                      //While dragging the first card,
-                      //Add what the user swiped in the last frame to the alignment of the card
-                      setState(() {
-                        topCardAlign = Alignment(
-                            topCardAlign.x +
-                                20 *
-                                    details.delta.dx /
-                                    MediaQuery.of(context).size.width,
-                            topCardAlign.y +
-                                40 *
-                                    details.delta.dy /
-                                    MediaQuery.of(context).size.height);
+              // Prevent swiping if the cards are animating
+              _controller.status != AnimationStatus.forward &&
+                      timer.status == AnimationStatus.dismissed
+                  ? SizedBox.expand(
+                      child: GestureDetector(
+                      onPanUpdate: (DragUpdateDetails details) {
+                        //While dragging the first card,
+                        //Add what the user swiped in the last frame to the alignment of the card
+                        setState(() {
+                          topCardAlign = Alignment(
+                              topCardAlign.x +
+                                  20 *
+                                      details.delta.dx /
+                                      MediaQuery.of(context).size.width,
+                              topCardAlign.y +
+                                  40 *
+                                      details.delta.dy /
+                                      MediaQuery.of(context).size.height);
 
-                        topCardRot = topCardAlign.x;
-                      });
-                    },
-                    onPanEnd: (_) {
-                      //When releasing the first card
-                      //If the front card was swiped far enough to count as swiped
-                      if (topCardAlign.x > 3.0 || topCardAlign.x < -3.0) {
-                        setState(() {
-                          resetAnimators();
+                          topCardRot = topCardAlign.x;
                         });
-                      } else {
-                        //Otherwise go back to initial rotation and alignment
-                        setState(() {
-                          topCardAlign = defaultTopCardAlign;
-                          topCardRot = 0.0;
-                        });
-                      }
-                    },
-                  ))
-                : Container()
-          ],
-        )),
-        gameBar()
-      ],
+                      },
+                      onPanEnd: (_) {
+                        //When releasing the first card
+                        //If the front card was swiped far enough to count as swiped
+                        if (topCardAlign.x > 3.0) {
+                          correct = true;
+                          setState(() {
+                            resetAnimators();
+                          });
+                        } else if (topCardAlign.x < -3.0) {
+                          correct = false;
+                          setState(() {
+                            resetAnimators();
+                          });
+                        } else {
+                          //Otherwise go back to initial rotation and alignment
+                          setState(() {
+                            topCardAlign = defaultTopCardAlign;
+                            topCardRot = 0.0;
+                          });
+                        }
+                      },
+                    ))
+                  : Container()
+            ],
+          )),
+          gameBar()
+        ],
+      ),
     );
   }
 
@@ -201,9 +219,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       cards[0].position = 0;
       cards[1] = cards[2];
       cards[1].position = 1;
-      cards[2] = WhoIsCard(individual: game.next(false), position: 2);
+      cards[2] = WhoIsCard(individual: game.next(correct), position: 2);
 
-      counter++; //keep track of cards passed
+      counter++; //keep track of correct cards passed
 
       //Reset alignments
       topCardAlign = defaultTopCardAlign;
@@ -211,9 +229,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
       //Start timer again
       timer.reverse();
-      _gameBarIndex = 0;
+      _gameBarIndex = 0; //Reset gamebar to timer
 
-      print("refreshing cards, counter: $counter");
+      if (counter >= 20) {
+        int score = game.getScore();
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => ScoreScreen(score)));
+      }
     });
   }
 
@@ -228,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget gameBar() {
     return FadeIndexedStack(
-        duration: Duration(milliseconds: 200),
+        duration: Duration(milliseconds: 300),
         index: _gameBarIndex,
         children: <Widget>[
           Container(
@@ -243,8 +265,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 borderRadius: 12.0,
                 direction: Axis.horizontal,
                 center: Text(timerString,
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.bold)),
               )),
           Container(
               height: 40.0,
@@ -252,14 +276,31 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Icon(Icons.arrow_back_ios, color: Colors.red, size: 40.0,),
-                  Icon(Icons.cancel, color: Colors.red, size: 40.0,),
+                  Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.red,
+                    size: 40.0,
+                  ),
+                  Icon(
+                    Icons.cancel,
+                    color: Colors.red,
+                    size: 40.0,
+                  ),
                   Text("Swipe Card",
                       style: TextStyle(
-                        color: Colors.cyan,
-                          fontSize: 20.0, fontWeight: FontWeight.bold)),
-                  Icon(Icons.check_circle, color: Colors.green, size: 40.0,),
-                  Icon(Icons.arrow_forward_ios, color: Colors.green, size: 40.0,),
+                          color: Colors.cyan,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold)),
+                  Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 40.0,
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.green,
+                    size: 40.0,
+                  ),
                 ],
               ))
         ]);

@@ -27,6 +27,8 @@ class Game {
     var last = displayed.removeLast();
     if (!lastCorrect) {
       remaining.insert(0, last);
+    }else{
+      score++;
     }
 
     var next = remaining.removeLast();
