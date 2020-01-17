@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         appBar: AppBar(
           elevation: 10.0,
+          backgroundColor: Colors.cyan,
           title: Text('Who is Who'),
         ),
         backgroundColor: Colors.white,
