@@ -84,7 +84,7 @@ class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin{
                       Text(widget.individual.getName(),
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: 20.0,
+                              fontSize: 25.0,
                               fontWeight: FontWeight.w700)),
                       Padding(padding: EdgeInsets.only(bottom: 8.0)),
                       Text('', //TODO: add back description

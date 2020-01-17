@@ -252,12 +252,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+                  Icon(Icons.arrow_back_ios, color: Colors.red, size: 40.0,),
                   Icon(Icons.cancel, color: Colors.red, size: 40.0,),
                   Text("Swipe Card",
                       style: TextStyle(
                         color: Colors.cyan,
                           fontSize: 20.0, fontWeight: FontWeight.bold)),
                   Icon(Icons.check_circle, color: Colors.green, size: 40.0,),
+                  Icon(Icons.arrow_forward_ios, color: Colors.green, size: 40.0,),
                 ],
               ))
         ]);
