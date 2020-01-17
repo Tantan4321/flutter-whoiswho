@@ -99,10 +99,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return GestureDetector(
       onTap: () {
         //User tapped screen, skip timer
-        if (timer.value != 0.0) {
+        if (!timer.isDismissed) {
           timer.stop();
           timer.value = 0.0;
-          timerComplete();
         }
       },
       child: Column(
