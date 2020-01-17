@@ -30,15 +30,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    initPlatformState();
   }
-
-  initPlatformState() {
-
-
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,9 +42,5 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         body: HomeScreen(context)
     );
-  }
-
-  Image loadImage(String path) {
-    return Image(image: AssetImage(path));
   }
 }
