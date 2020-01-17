@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_whoiswho/card.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'game_framework.dart';
 import 'dart:math';
 
@@ -26,8 +27,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with TickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Game game;
 
   List<WhoIsCard> cards = List();
@@ -117,11 +117,10 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  void flipCard(){
+  void flipCard() {
     setState(() {
       cards[0].flip();
     });
-
   }
 
   Widget backCard() {
@@ -173,7 +172,6 @@ class _HomeScreenState extends State<HomeScreen>
       cards[1].position = 1;
       cards[2] = WhoIsCard(individual: game.next(false), position: 2);
 
-
       //Reset alignments
       topCardAlign = defaultTopCardAlign;
       topCardRot = 0.0;
@@ -188,9 +186,18 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget gameBar() {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 48.0),
-      child: LinearProgressIndicator(value: 1.0, )
-    );
+        height: 40.0,
+        margin: EdgeInsets.symmetric(vertical: 30.0, horizontal: 10.0),
+        child: LiquidLinearProgressIndicator(
+          value: 0.2,
+          valueColor: AlwaysStoppedAnimation(Colors.pink),
+          borderColor: Colors.redAccent,
+          borderWidth: 5.0,
+          borderRadius: 12.0,
+          direction: Axis.horizontal,
+          center: Text("yes",
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+        ));
   }
 }
 

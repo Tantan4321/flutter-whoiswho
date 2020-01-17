@@ -25,6 +25,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   path_provider: ^1.5.1
   flip_card: ^0.4.4
+  liquid_progress_indicator: ^0.3.2
 
 
 dev_dependencies:
