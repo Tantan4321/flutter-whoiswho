@@ -98,6 +98,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
+      onPanStart: (_) {
+        //User started dragging screen, skip timer
+        if (!timer.isDismissed) {
+          timer.stop();
+          timer.value = 0.0;
+        }
+      },
       onTap: () {
         //User tapped screen, skip timer
         if (!timer.isDismissed) {
