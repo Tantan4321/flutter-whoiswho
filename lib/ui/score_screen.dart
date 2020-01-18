@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nice_button/NiceButton.dart';
+
+import 'game_screen.dart';
 
 class ScoreScreen extends StatelessWidget {
   int score;
@@ -31,17 +34,18 @@ class ScoreScreen extends StatelessWidget {
                       fontSize: 70.0,
                       fontWeight: FontWeight.bold)),
               SizedBox(height: 30.0),
-//              CupertinoButton(
-//                color: Colors.cyan,
-//                onPressed: () {
-//                  Navigator.pop(context);
-//                },
-//                child: Text("Play Again",
-//                    style: TextStyle(
-//                        color: Colors.white,
-//                        fontSize: 25.0,
-//                        fontWeight: FontWeight.bold)),
-//              )
+              NiceButton(
+                radius: 40,
+                padding: EdgeInsets.all(15),
+                background: Colors.cyan,
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => GameScreen(context)));
+                },
+                text: "Use Default Deck",
+              )
             ],
           ),
         )

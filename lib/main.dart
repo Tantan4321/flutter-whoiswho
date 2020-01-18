@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_whoiswho/game_framework.dart';
-import 'package:flutter_whoiswho/primary_page.dart';
+import 'package:flutter_whoiswho/ui/game_screen.dart';
+import 'package:flutter_whoiswho/ui/launch_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -40,7 +41,7 @@ class _HomePageState extends State<HomePage> {
           title: Text('Who is Who'),
         ),
         backgroundColor: Colors.white,
-        body: HomeScreen(context)
+        body: LaunchScreen()
     );
   }
 }
