@@ -1,11 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_whoiswho/card.dart';
-import 'package:flutter_whoiswho/fade_indexed_stack.dart';
-import 'package:flutter_whoiswho/score_page.dart';
+import 'package:flutter_whoiswho/widgets/card.dart';
+import 'package:flutter_whoiswho/widgets/fade_indexed_stack.dart';
+import 'package:flutter_whoiswho/ui/score_screen.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
-import 'game_framework.dart';
+import '../game_framework.dart';
 import 'dart:math';
 
 List<Alignment> cardsAlign = [
@@ -15,8 +15,8 @@ List<Alignment> cardsAlign = [
 ];
 List<Size> cardsSize = List(3);
 
-class HomeScreen extends StatefulWidget {
-  HomeScreen(BuildContext context) {
+class GameScreen extends StatefulWidget {
+  GameScreen(BuildContext context) {
     cardsSize[0] = Size(MediaQuery.of(context).size.width * 0.9,
         MediaQuery.of(context).size.height * 0.6);
     cardsSize[1] = Size(MediaQuery.of(context).size.width * 0.85,
@@ -26,10 +26,10 @@ class HomeScreen extends StatefulWidget {
   }
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _GameScreenState createState() => _GameScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   Game game;
   int counter;
   bool correct;
@@ -96,80 +96,87 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onPanStart: (_) {
-        //User started dragging screen, skip timer
-        if (!timer.isDismissed) {
-          timer.stop();
-          timer.value = 0.0;
-        }
-      },
-      onTap: () {
-        //User tapped screen, skip timer
-        if (!timer.isDismissed) {
-          timer.stop();
-          timer.value = 0.0;
-        }
-      },
-      child: Column(
-        children: <Widget>[
-          Expanded(
-              child: Stack(
-            children: <Widget>[
-              backCard(),
-              middleCard(),
-              topCard(),
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 10.0,
+        backgroundColor: Colors.cyan,
+        title: Text('NAME OF DECK'),
+      ),
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onPanStart: (_) {
+          //User started dragging screen, skip timer
+          if (!timer.isDismissed && !_controller.isAnimating) {
+            timer.stop();
+            timer.value = 0.0;
+          }
+        },
+        onTap: () {
+          //User tapped screen, skip timer
+          if (!timer.isDismissed && !_controller.isAnimating) {
+            timer.stop();
+            timer.value = 0.0;
+          }
+        },
+        child: Column(
+          children: <Widget>[
+            Expanded(
+                child: Stack(
+              children: <Widget>[
+                backCard(),
+                middleCard(),
+                topCard(),
 
-              // Prevent swiping if the cards are animating
-              _controller.status != AnimationStatus.forward &&
-                      timer.status == AnimationStatus.dismissed
-                  ? SizedBox.expand(
-                      child: GestureDetector(
-                      onPanUpdate: (DragUpdateDetails details) {
-                        //While dragging the first card,
-                        //Add what the user swiped in the last frame to the alignment of the card
-                        setState(() {
-                          topCardAlign = Alignment(
-                              topCardAlign.x +
-                                  20 *
-                                      details.delta.dx /
-                                      MediaQuery.of(context).size.width,
-                              topCardAlign.y +
-                                  40 *
-                                      details.delta.dy /
-                                      MediaQuery.of(context).size.height);
+                // Prevent swiping if the cards are animating
+                _controller.status != AnimationStatus.forward &&
+                        timer.status == AnimationStatus.dismissed
+                    ? SizedBox.expand(
+                        child: GestureDetector(
+                        onPanUpdate: (DragUpdateDetails details) {
+                          //While dragging the first card,
+                          //Add what the user swiped in the last frame to the alignment of the card
+                          setState(() {
+                            topCardAlign = Alignment(
+                                topCardAlign.x +
+                                    20 *
+                                        details.delta.dx /
+                                        MediaQuery.of(context).size.width,
+                                topCardAlign.y +
+                                    40 *
+                                        details.delta.dy /
+                                        MediaQuery.of(context).size.height);
 
-                          topCardRot = topCardAlign.x;
-                        });
-                      },
-                      onPanEnd: (_) {
-                        //When releasing the first card
-                        //If the front card was swiped far enough to count as swiped
-                        if (topCardAlign.x > 3.0) {
-                          correct = true;
-                          setState(() {
-                            resetAnimators();
+                            topCardRot = topCardAlign.x;
                           });
-                        } else if (topCardAlign.x < -3.0) {
-                          correct = false;
-                          setState(() {
-                            resetAnimators();
-                          });
-                        } else {
-                          //Otherwise go back to initial rotation and alignment
-                          setState(() {
-                            topCardAlign = defaultTopCardAlign;
-                            topCardRot = 0.0;
-                          });
-                        }
-                      },
-                    ))
-                  : Container()
-            ],
-          )),
-          gameBar()
-        ],
+                        },
+                        onPanEnd: (_) {
+                          //When releasing the first card
+                          //If the front card was swiped far enough to count as swiped
+                          if (topCardAlign.x > 3.0) {
+                            correct = true;
+                            setState(() {
+                              resetAnimators();
+                            });
+                          } else if (topCardAlign.x < -3.0) {
+                            correct = false;
+                            setState(() {
+                              resetAnimators();
+                            });
+                          } else {
+                            //Otherwise go back to initial rotation and alignment
+                            setState(() {
+                              topCardAlign = defaultTopCardAlign;
+                              topCardRot = 0.0;
+                            });
+                          }
+                        },
+                      ))
+                    : Container()
+              ],
+            )),
+            gameBar()
+          ],
+        ),
       ),
     );
   }
