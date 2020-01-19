@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_whoiswho/game_framework.dart';
+import 'package:flutter_whoiswho/widgets/smart_image.dart';
 
 class WhoIsCard extends StatefulWidget {
   int position;
@@ -14,25 +15,24 @@ class WhoIsCard extends StatefulWidget {
   @override
   _WhoIsCardState createState() => _WhoIsCardState();
 
-  void flip(){
+  void flip() {
     cardKey.currentState.toggleCard();
   }
-
 }
 
-class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin{
+class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin {
   bool visible = false;
-
 
   AnimationController controller;
   Animation<double> animation;
 
   @override
   void initState() {
-    controller = AnimationController(duration: const Duration(milliseconds: 100), vsync: this, value: 1.0);
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 100), vsync: this, value: 1.0);
     animation = CurvedAnimation(parent: controller, curve: Curves.easeOut);
     if (widget.position == 0) visible = true;
-    if(visible){
+    if (visible) {
       controller.reverse();
     }
     super.initState();
@@ -43,7 +43,7 @@ class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin{
     if (widget.position == 0) {
       visible = true;
     }
-    if(visible){
+    if (visible) {
       controller.reverse();
     }
     super.didUpdateWidget(oldWidget);
@@ -59,8 +59,7 @@ class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin{
           child: Stack(children: <Widget>[
             SizedBox.expand(
               ///Image layer
-              child:
-                  Image.asset(widget.individual.getPath(), fit: BoxFit.cover),
+              child: SmartImage(widget.individual.getPath())
             ),
             SizedBox.expand(
               child: Container(
@@ -101,8 +100,7 @@ class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin{
             children: <Widget>[
               SizedBox.expand(
                 ///Image layer
-                child:
-                    Image.asset(widget.individual.getPath(), fit: BoxFit.cover),
+                child: SmartImage(widget.individual.getPath())
               ),
               SizedBox.expand(
                 child: Container(
@@ -117,16 +115,16 @@ class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin{
 
                   ///Card blur filter
                   child: FadeTransition(
-                    opacity: animation,
-                    child: Container(
-                      child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.grey.shade400.withOpacity(0.8)),
-                          )),
-                    ),
-                  )),
+                opacity: animation,
+                child: Container(
+                  child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade400.withOpacity(0.8)),
+                      )),
+                ),
+              )),
             ],
           ),
         ));
