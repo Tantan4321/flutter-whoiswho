@@ -120,6 +120,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         backgroundColor: AppColors.prussianBlue,
         title: Text(toTitleCase(deckName)),
       ),
+      backgroundColor: AppColors.whiteSmoke,
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onPanStart: (_) {
@@ -263,7 +264,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       timer.reverse();
       _gameBarIndex = 0; //Reset gamebar to timer
 
-      if (counter >= 20) { //TODO: 5 for testing
+      if (counter >= 20) {
         int score = game.getScore();
         Navigator.pushReplacement(
             context,
@@ -291,16 +292,16 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               margin: EdgeInsets.symmetric(vertical: 30.0, horizontal: 10.0),
               child: LiquidLinearProgressIndicator(
                 value: timer.value,
-                valueColor: AlwaysStoppedAnimation(Colors.redAccent),
-                backgroundColor: Colors.cyan,
-                borderColor: Colors.redAccent,
-                borderWidth: 5.0,
+                valueColor: AlwaysStoppedAnimation(AppColors.coralRed),
+                backgroundColor: Colors.teal,
+                borderColor: AppColors.coralRed,
+                borderWidth: 6.0,
                 borderRadius: 12.0,
                 direction: Axis.horizontal,
                 center: Text(timerString,
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize: 25.0,
+                        fontSize: 28.0,
                         fontWeight: FontWeight.bold)),
               )),
           Container(
@@ -321,8 +322,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   ),
                   Text("Swipe Card",
                       style: TextStyle(
-                          color: Colors.cyan,
-                          fontSize: 20.0,
+                          color: Colors.teal,
+                          fontSize: 24.0,
                           fontWeight: FontWeight.bold)),
                   Icon(
                     Icons.check_circle,

@@ -21,7 +21,7 @@ class ScoreScreen extends StatelessWidget {
           backgroundColor: AppColors.prussianBlue,
           title: Text(''),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.whiteSmoke,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
