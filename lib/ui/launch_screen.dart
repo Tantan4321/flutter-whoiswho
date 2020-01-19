@@ -146,7 +146,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                             )
                           ])),
                   Divider(),
-                  snapshot.hasData
+                  snapshot.hasData && !snapshot.hasError
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
@@ -271,7 +271,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
     final path = dir.path;
 
     Map<String, dynamic> ret =
-        await parseJson(File("$path/$fileName/images.json"));
+        await parseJson(File("$path/$fileName/data.whoiswho"));
     return ret;
   }
 

@@ -3,7 +3,9 @@ import 'package:flutter_whoiswho/ui/AppColors.dart';
 
 
 String toTitleCase(String givenString) {
-  givenString = givenString.substring(0, givenString.lastIndexOf('.zip'));
+  if(givenString.contains('.zip')) {
+    givenString = givenString.substring(0, givenString.lastIndexOf('.zip'));
+  }
   List<String> arr = givenString.split("_");
   String ret = "";
   for (int i = 0; i < arr.length; i++) {
