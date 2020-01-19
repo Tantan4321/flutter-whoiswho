@@ -10,7 +10,7 @@ class Game {
   String setType;
 
   Game() {
-    remaining = jsonToList(data.jsonData); //TODO: implement lazy loaded data
+    remaining = shuffle(jsonToList(data.jsonData));
     score = 0;
   }
 

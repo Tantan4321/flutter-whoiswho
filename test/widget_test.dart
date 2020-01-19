@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_whoiswho/main.dart';
-import 'package:flutter_whoiswho/score_page.dart';
+import 'package:flutter_whoiswho/ui/score_screen.dart';
 
 void main() {
   testWidgets('test widget', (WidgetTester tester) async {

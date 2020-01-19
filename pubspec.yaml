@@ -25,6 +25,8 @@ dependencies:
   cupertino_icons: ^0.1.2
   flip_card: ^0.4.4
   liquid_progress_indicator: ^0.3.2
+  dio: ^3.0.8
+  nice_button: ^0.1.7
 
 
 dev_dependencies:
