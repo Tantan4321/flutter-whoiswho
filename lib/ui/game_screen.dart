@@ -100,7 +100,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       appBar: AppBar(
         elevation: 10.0,
         backgroundColor: Colors.cyan,
-        title: Text('NAME OF DECK'),
+        title: Text('Famous People'),
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,

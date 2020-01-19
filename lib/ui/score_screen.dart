@@ -15,7 +15,7 @@ class ScoreScreen extends StatelessWidget {
         appBar: AppBar(
           elevation: 10.0,
           backgroundColor: Colors.cyan,
-          title: Text('Who is Who'),
+          title: Text(''),
         ),
         backgroundColor: Colors.white,
         body: Center(
@@ -37,14 +37,14 @@ class ScoreScreen extends StatelessWidget {
               NiceButton(
                 radius: 40,
                 padding: EdgeInsets.all(15),
-                background: Colors.cyan,
+                background: Colors.green,
                 onPressed: () {
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => GameScreen(context)));
                 },
-                text: "Use Default Deck",
+                text: "Play Again",
               )
             ],
           ),
