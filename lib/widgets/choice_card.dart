@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_whoiswho/ui/AppColors.dart';
 
 
-String capitalizeFirstChar(String text) {
-  if (text == null || text.length <= 1) {
-    return text.toUpperCase();
+String toTitleCase(String givenString) {
+  givenString = givenString.substring(0, givenString.lastIndexOf('.zip'));
+  List<String> arr = givenString.split("_");
+  String ret = "";
+  for (int i = 0; i < arr.length; i++) {
+    ret += arr[i].substring(0,1).toUpperCase();
+    ret += arr[i].substring(1) + " ";
   }
-  String ret = text[0].toUpperCase();
-  if (text.contains('.zip')) {
-    ret += text.substring(1, text.lastIndexOf('.zip'));
-  } else {
-    ret += text.substring(1);
-  }
-  return ret;
+  return ret.trim();
 }
 
 class DataChoiceCard extends StatelessWidget {
@@ -23,7 +22,7 @@ class DataChoiceCard extends StatelessWidget {
 
   final VoidCallback onPressed;
   final String name;
-  final Color cardColor = Colors.cyan;
+  final Color cardColor = AppColors.copper;
 
 
   Widget _buildCardContent() {
@@ -35,11 +34,11 @@ class DataChoiceCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Hero(
-              tag: capitalizeFirstChar(name),
+              tag: toTitleCase(name),
               child: Material(
                 color: Colors.transparent,
                 child: Text(
-                  capitalizeFirstChar(name),
+                  toTitleCase(name),
                   style: TextStyle(
                     fontSize: 26,
                     height: 0.7,

@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_whoiswho/ui/AppColors.dart';
 import 'package:flutter_whoiswho/ui/score_screen.dart';
 import 'package:flutter_whoiswho/widgets/deck_card.dart';
 import 'package:flutter_whoiswho/widgets/fade_indexed_stack.dart';
@@ -116,7 +117,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         elevation: 10.0,
-        backgroundColor: Colors.cyan,
+        backgroundColor: AppColors.prussianBlue,
         title: Text(toTitleCase(deckName)),
       ),
       body: GestureDetector(

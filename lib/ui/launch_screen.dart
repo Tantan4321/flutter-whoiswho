@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_whoiswho/data.dart';
+import 'package:flutter_whoiswho/ui/AppColors.dart';
 import 'package:flutter_whoiswho/ui/game_screen.dart';
 import 'package:flutter_whoiswho/widgets/choice_card.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -22,7 +23,7 @@ class LaunchScreen extends StatefulWidget {
 
 class _LaunchScreenState extends State<LaunchScreen> {
   final String databaseUrl =
-      "https://api.github.com/repos/dhrumilp15/quiqui_imgs/contents/";
+      "https://api.github.com/repos/Tantan4321/flutter-whoiswho/contents/assets";
   bool isLoading = false;
   double downloadProgress = 0.0;
   Future<List<String>> remoteFiles;
@@ -40,7 +41,9 @@ class _LaunchScreenState extends State<LaunchScreen> {
 
   Future<List<String>> _fetchZips() async {
     var response;
-    try {response = await http.get(databaseUrl);} catch (StackTrace) {}
+    try {
+      response = await http.get(databaseUrl);
+    } catch (StackTrace) {}
 
     List<String> remoteDecks = [];
 
@@ -51,7 +54,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
           remoteDecks.add(json["name"]);
         }
       });
-      print('remote decks: $remoteDecks');
     }
 
     // See which remote decks have already been downloaded
@@ -61,8 +63,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
         remoteDecks[remoteDecks.indexOf("$zipName.zip")] = zipName;
       }
     });
-
-    print(remoteDecks);
 
     return remoteDecks;
   }
@@ -90,7 +90,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.whiteSmoke,
         body: FutureBuilder<List<String>>(
             future: remoteFiles,
             builder: (context, snapshot) {
@@ -98,7 +98,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 children: <Widget>[
                   ConstrainedBox(
                       constraints: BoxConstraints(
-                          maxHeight: MediaQuery.of(context).size.height / 3),
+                          maxHeight: MediaQuery.of(context).size.height / 2.5),
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -106,7 +106,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                             NiceButton(
                               radius: 40,
                               padding: EdgeInsets.all(15),
-                              background: Colors.cyan,
+                              background: Colors.teal,
                               onPressed: () {
                                 startGame(data.jsonData);
                               },
@@ -115,7 +115,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                             NiceButton(
                               radius: 40,
                               padding: EdgeInsets.all(15),
-                              background: Colors.cyan,
+                              background: Colors.teal,
                               onPressed: () async {
                                 File file = await FilePicker.getFile(
                                     type: FileType.ANY,
@@ -136,8 +136,13 @@ class _LaunchScreenState extends State<LaunchScreen> {
                               },
                               text: "Choose From Device",
                             ),
+                            SizedBox(height: 10.0),
                             Text(
                               "Load from Web Database:",
+                              style: TextStyle(
+                                  fontSize: 22.0,
+                                  color: AppColors.copper,
+                                  fontWeight: FontWeight.bold),
                             )
                           ])),
                   Divider(),
@@ -152,7 +157,8 @@ class _LaunchScreenState extends State<LaunchScreen> {
                                   shrinkWrap: true,
                                   itemBuilder: (BuildContext context, index) {
                                     return Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0, horizontal: 16.0),
                                       child: DataChoiceCard(
                                         name: snapshot.data[index],
                                         onPressed: () async {
@@ -167,9 +173,9 @@ class _LaunchScreenState extends State<LaunchScreen> {
                                   itemCount: snapshot.data.length)
                             ])
                       : Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Center(child: CircularProgressIndicator()),
-                      )
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
                 ],
               );
             }));
@@ -215,7 +221,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
     String fileName = downloadJson["name"];
     await dio.download(downloadJson["download_url"], "$path/$fileName",
         onReceiveProgress: (rec, total) {
-          downloadProgress = (rec / total);
+      downloadProgress = (rec / total);
     });
 
     // Unzip file and return the deck data
@@ -224,7 +230,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
   }
 
   Future<Map<String, dynamic>> unzip(String path, String zipName) async {
-    //TODO: refactor
     Map<String, dynamic> returnJson;
 
     final rawFile = File("$path/$zipName").readAsBytesSync();
@@ -237,7 +242,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
       final fileName = file.name;
       if (file.isFile) {
         final data = file.content as List<int>;
-        print('Saved Location: $saveDirName/$fileName');
         File('$saveDirName/' + fileName)
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);
@@ -255,7 +259,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
   Future<Map<String, dynamic>> parseJson(File file) async {
     String contents = await file.readAsString();
     var jsonify = jsonDecode(contents);
-    print(jsonify);
     if (jsonify is Map<String, dynamic>) {
       return jsonify;
     } else {
@@ -264,8 +267,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
   }
 
   Future<Map<String, dynamic>> loadFromLocal(String fileName) async {
-    //TODO: refactor
-    print("trying to load from app docs.........");
     final dir = await loadAppDir;
     final path = dir.path;
 
