@@ -58,9 +58,9 @@ class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(20.0),
           child: Stack(children: <Widget>[
             SizedBox.expand(
-              ///Image layer
-              child: SmartImage(widget.individual.getPath())
-            ),
+
+                ///Image layer
+                child: SmartImage(widget.individual.getPath())),
             SizedBox.expand(
               child: Container(
                 decoration: BoxDecoration(
@@ -83,12 +83,16 @@ class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin {
                       Text(widget.individual.getName(),
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: 25.0,
+                              fontSize: 30.0,
                               fontWeight: FontWeight.w700)),
-                      Padding(padding: EdgeInsets.only(bottom: 8.0)),
-                      Text('', //TODO: add back description
-                          textAlign: TextAlign.start,
-                          style: TextStyle(color: Colors.white)),
+                      Padding(padding: EdgeInsets.only(bottom: 12.0)),
+                      widget.individual.getDescription().isNotEmpty 
+                          ? Text(widget.individual.getDescription(),
+                              textAlign: TextAlign.start,
+                              softWrap: true,
+                              style: TextStyle(fontSize: 18.0, color: Colors.white))
+                          : Divider(),
+                      Padding(padding: EdgeInsets.only(bottom: 16.0)),
                     ],
                   )),
             )
@@ -99,9 +103,9 @@ class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin {
           child: Stack(
             children: <Widget>[
               SizedBox.expand(
-                ///Image layer
-                child: SmartImage(widget.individual.getPath())
-              ),
+
+                  ///Image layer
+                  child: SmartImage(widget.individual.getPath())),
               SizedBox.expand(
                 child: Container(
                   decoration: BoxDecoration(

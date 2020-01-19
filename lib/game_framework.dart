@@ -1,21 +1,19 @@
 import 'dart:core';
 import 'dart:math';
 
-import 'package:flutter_whoiswho/data.dart';
-
 class Game {
   List<Individual> remaining;
   List<Individual> displayed;
   int score;
   String setType;
 
-  Game() {
-    remaining = shuffle(jsonToList(data.jsonData));
+  Game(Map<String, dynamic> deckJson, String deckName) {
+    remaining = shuffle(jsonToList(deckJson, deckName));
     score = 0;
   }
 
-  List<Individual> jsonToList(jsonData) {
-    return jsonData["famous_people"] //TODO: rework to be compatible with any
+  List<Individual> jsonToList(jsonData, deckName) {
+    return jsonData[deckName] //TODO: rework to be compatible with any
         .map<Individual>((jsonObject) => Individual.fromJson(jsonObject))
         .toList();
   }
@@ -25,7 +23,6 @@ class Game {
 
     // Go through all elements.
     for (var i = items.length - 1; i > 0; i--) {
-
       // Pick a pseudorandom number according to the list length
       var n = random.nextInt(i + 1);
 
@@ -45,7 +42,7 @@ class Game {
     var last = displayed.removeLast();
     if (!lastCorrect) {
       remaining.insert(0, last);
-    }else{
+    } else {
       score++;
     }
 
@@ -72,12 +69,13 @@ class Game {
 class Individual {
   String name;
   String imagePath;
+  String description;
 
-  Individual(this.name, this.imagePath);
+  Individual(this.name, this.imagePath, this.description);
 
   factory Individual.fromJson(Map<String, dynamic> jsonObject) {
-    return Individual(
-        jsonObject["name"].toString(), jsonObject["img"].toString());
+    return Individual(jsonObject["name"].toString(),
+        jsonObject["img"].toString(), jsonObject["description"].toString());
   }
 
   String getName() {
@@ -86,5 +84,9 @@ class Individual {
 
   String getPath() {
     return imagePath;
+  }
+
+  String getDescription() {
+    return description;
   }
 }
