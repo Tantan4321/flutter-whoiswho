@@ -1,12 +1,14 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_whoiswho/widgets/card.dart';
-import 'package:flutter_whoiswho/widgets/fade_indexed_stack.dart';
 import 'package:flutter_whoiswho/ui/score_screen.dart';
+import 'package:flutter_whoiswho/widgets/deck_card.dart';
+import 'package:flutter_whoiswho/widgets/fade_indexed_stack.dart';
+import 'package:flutter_whoiswho/widgets/fade_page_route.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+
 import '../game_framework.dart';
-import 'dart:math';
 
 List<Alignment> cardsAlign = [
   Alignment(0.0, 1.0),
@@ -16,7 +18,9 @@ List<Alignment> cardsAlign = [
 List<Size> cardsSize = List(3);
 
 class GameScreen extends StatefulWidget {
-  GameScreen(BuildContext context) {
+  final Map<String, dynamic> deckJson;
+
+  GameScreen(BuildContext context, this.deckJson) {
     cardsSize[0] = Size(MediaQuery.of(context).size.width * 0.9,
         MediaQuery.of(context).size.height * 0.6);
     cardsSize[1] = Size(MediaQuery.of(context).size.width * 0.85,
@@ -30,6 +34,8 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
+  String deckName;
+
   Game game;
   int counter;
   bool correct;
@@ -42,7 +48,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     return '${(d.inSeconds).toString()}';
   }
 
-  List<WhoIsCard> cards = List();
+  List<WhoIsWhoCard> cards = List();
   AnimationController _controller;
 
   final Alignment defaultTopCardAlign = Alignment(0.0, 0.0);
@@ -53,7 +59,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     //Init the game
-    game = new Game();
+    deckName = widget.deckJson.keys.toList()[0];
+    game = new Game(widget.deckJson, deckName);
     counter = 0;
     //Get the first few cards
     List<Individual> firstFew = game.getFirstFew(cardsSize.length);
@@ -71,7 +78,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
     //Init cards
     for (int i = 0; i < firstFew.length; i++) {
-      cards.add(WhoIsCard(individual: firstFew[i], position: i));
+      cards.add(WhoIsWhoCard(individual: firstFew[i], position: i));
     } //Make the top card visible
 
     topCardAlign = cardsAlign[2];
@@ -94,13 +101,23 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  String toTitleCase(String givenString) {
+    List<String> arr = givenString.split("_");
+    String ret = "";
+    for (int i = 0; i < arr.length; i++) {
+      ret += arr[i].substring(0,1).toUpperCase();
+      ret += arr[i].substring(1) + " ";
+    }
+    return ret.trim();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 10.0,
         backgroundColor: Colors.cyan,
-        title: Text('NAME OF DECK'),
+        title: Text(toTitleCase(deckName)),
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -233,7 +250,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       cards[0].position = 0;
       cards[1] = cards[2];
       cards[1].position = 1;
-      cards[2] = WhoIsCard(individual: game.next(correct), position: 2);
+      cards[2] = WhoIsWhoCard(individual: game.next(correct), position: 2);
 
       counter++; //keep track of correct cards passed
 
@@ -245,10 +262,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       timer.reverse();
       _gameBarIndex = 0; //Reset gamebar to timer
 
-      if (counter >= 20) {
+      if (counter >= 20) { //TODO: 5 for testing
         int score = game.getScore();
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => ScoreScreen(score)));
+        Navigator.pushReplacement(
+            context,
+            FadeRoute(page: ScoreScreen(score, widget.deckJson)));
       }
     });
   }
