@@ -1,13 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_whoiswho/widgets/fade_page_route.dart';
 import 'package:nice_button/NiceButton.dart';
 
 import 'game_screen.dart';
 
 class ScoreScreen extends StatelessWidget {
-  int score;
+  final int score;
+  final Map<String, dynamic> deckJson;
 
-  ScoreScreen(this.score);
+
+  ScoreScreen(this.score, this.deckJson);
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +40,13 @@ class ScoreScreen extends StatelessWidget {
               NiceButton(
                 radius: 40,
                 padding: EdgeInsets.all(15),
-                background: Colors.cyan,
+                background: Colors.green,
                 onPressed: () {
                   Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => GameScreen(context)));
+                      FadeRoute(page: GameScreen(context, deckJson)));
                 },
-                text: "Use Default Deck",
+                text: "Play Again",
               )
             ],
           ),

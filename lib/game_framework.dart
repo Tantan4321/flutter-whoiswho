@@ -13,7 +13,7 @@ class Game {
   }
 
   List<Individual> jsonToList(jsonData, deckName) {
-    return jsonData[deckName] //TODO: rework to be compatible with any
+    return jsonData[deckName]
         .map<Individual>((jsonObject) => Individual.fromJson(jsonObject))
         .toList();
   }
