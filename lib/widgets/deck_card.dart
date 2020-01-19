@@ -5,22 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_whoiswho/game_framework.dart';
 import 'package:flutter_whoiswho/widgets/smart_image.dart';
 
-class WhoIsCard extends StatefulWidget {
+class WhoIsWhoCard extends StatefulWidget {
   int position;
   final Individual individual;
   GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
 
-  WhoIsCard({this.individual, this.position});
+  WhoIsWhoCard({this.individual, this.position});
 
   @override
-  _WhoIsCardState createState() => _WhoIsCardState();
+  _WhoIsWhoCardState createState() => _WhoIsWhoCardState();
 
   void flip() {
     cardKey.currentState.toggleCard();
   }
 }
 
-class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin {
+class _WhoIsWhoCardState extends State<WhoIsWhoCard> with TickerProviderStateMixin {
   bool visible = false;
 
   AnimationController controller;
@@ -39,7 +39,7 @@ class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin {
   }
 
   @override
-  void didUpdateWidget(WhoIsCard oldWidget) {
+  void didUpdateWidget(WhoIsWhoCard oldWidget) {
     if (widget.position == 0) {
       visible = true;
     }
@@ -86,7 +86,7 @@ class _WhoIsCardState extends State<WhoIsCard> with TickerProviderStateMixin {
                               fontSize: 30.0,
                               fontWeight: FontWeight.w700)),
                       Padding(padding: EdgeInsets.only(bottom: 12.0)),
-                      widget.individual.getDescription().isNotEmpty 
+                      widget.individual.getDescription().isNotEmpty
                           ? Text(widget.individual.getDescription(),
                               textAlign: TextAlign.start,
                               softWrap: true,
