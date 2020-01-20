@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_whoiswho/game_framework.dart';
+import 'package:flutter_whoiswho/ui/AppColors.dart';
 import 'package:flutter_whoiswho/widgets/smart_image.dart';
 
 class WhoIsWhoCard extends StatefulWidget {
@@ -65,8 +66,8 @@ class _WhoIsWhoCardState extends State<WhoIsWhoCard> with TickerProviderStateMix
               child: Container(
                 decoration: BoxDecoration(
                     gradient: LinearGradient(
-                        colors: [Colors.transparent, Colors.black54],
-                        begin: Alignment.center,
+                        colors: [Colors.black87.withOpacity(0.15), Colors.black],
+                        begin: Alignment.topCenter,
                         end: Alignment.bottomCenter)),
               ),
             ),
@@ -82,16 +83,18 @@ class _WhoIsWhoCardState extends State<WhoIsWhoCard> with TickerProviderStateMix
                     children: <Widget>[
                       Text(widget.individual.getName(),
                           style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.whiteSmoke,
                               fontSize: 30.0,
                               fontWeight: FontWeight.w700)),
                       Padding(padding: EdgeInsets.only(bottom: 12.0)),
-                      widget.individual.getDescription().isNotEmpty
-                          ? Text(widget.individual.getDescription(),
-                              textAlign: TextAlign.start,
-                              softWrap: true,
-                              style: TextStyle(fontSize: 18.0, color: Colors.white))
-                          : Divider(),
+                      if (widget.individual.getDescription().isNotEmpty) Flexible(
+                        child: Text(widget.individual.getDescription(),
+                                textAlign: TextAlign.start,
+                                softWrap: true,
+                                maxLines: 8,
+                                overflow: TextOverflow.fade,
+                                style: TextStyle(fontSize: 15.0, color: AppColors.whiteSmoke)),
+                      ) else Divider(),
                       Padding(padding: EdgeInsets.only(bottom: 16.0)),
                     ],
                   )),
