@@ -23,7 +23,7 @@ class LaunchScreen extends StatefulWidget {
 
 class _LaunchScreenState extends State<LaunchScreen> {
   final String databaseUrl =
-      "https://api.github.com/repos/Tantan4321/flutter-whoiswho/contents/assets";
+      "https://api.github.com/repos/Tantan4321/flutter-whoiswho/contents/database_dir";
   bool isLoading = false;
   double downloadProgress = 0.0;
   Future<List<String>> remoteFiles;
