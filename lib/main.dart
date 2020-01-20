@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_whoiswho/game_framework.dart';
+import 'package:flutter_whoiswho/ui/AppColors.dart';
 import 'package:flutter_whoiswho/ui/game_screen.dart';
 import 'package:flutter_whoiswho/ui/launch_screen.dart';
 
@@ -37,7 +38,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         appBar: AppBar(
           elevation: 10.0,
-          backgroundColor: Colors.cyan,
+          backgroundColor: AppColors.prussianBlue,
           title: Text('Who is Who'),
         ),
         backgroundColor: Colors.white,
