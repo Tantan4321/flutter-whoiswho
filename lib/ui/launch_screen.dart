@@ -94,90 +94,96 @@ class _LaunchScreenState extends State<LaunchScreen> {
         body: FutureBuilder<List<String>>(
             future: remoteFiles,
             builder: (context, snapshot) {
-              return Column(
-                children: <Widget>[
-                  ConstrainedBox(
-                      constraints: BoxConstraints(
-                          maxHeight: MediaQuery.of(context).size.height / 2.5),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            NiceButton(
-                              radius: 40,
-                              padding: EdgeInsets.all(15),
-                              background: Colors.teal,
-                              onPressed: () {
-                                startGame(data.jsonData);
-                              },
-                              text: "Use Default Deck",
-                            ),
-                            NiceButton(
-                              radius: 40,
-                              padding: EdgeInsets.all(15),
-                              background: Colors.teal,
-                              onPressed: () async {
-                                File file = await FilePicker.getFile(
-                                    type: FileType.ANY,
-                                    fileExtension: "whoiswho");
-                                if (file.exists() != null) {
-                                  try {
-                                    final parsed = Map<String, dynamic>.from(
-                                        json.decode(await file.readAsString()));
-                                    startGame(parsed);
-                                  } on Exception catch (e) {
-                                    Fluttertoast.showToast(
-                                        msg:
-                                            "Incorrect format! File must be .whoiswho",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM);
-                                  }
+              return Column(children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Select an option below to play WhoIsWho!",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.teal,
+                    ),
+                  ),
+                ),
+                ConstrainedBox(
+                    constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height / 2.7),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          NiceButton(
+                            radius: 40,
+                            padding: EdgeInsets.all(15),
+                            background: Colors.teal,
+                            onPressed: () {
+                              startGame(data.jsonData);
+                            },
+                            text: "Use Default Deck",
+                          ),
+                          NiceButton(
+                            radius: 40,
+                            padding: EdgeInsets.all(15),
+                            background: Colors.teal,
+                            onPressed: () async {
+                              File file = await FilePicker.getFile(
+                                  type: FileType.ANY,
+                                  fileExtension: "whoiswho");
+                              if (file.exists() != null) {
+                                try {
+                                  final parsed = Map<String, dynamic>.from(
+                                      json.decode(await file.readAsString()));
+                                  startGame(parsed);
+                                } on Exception catch (e) {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                          "Incorrect format! File must be .whoiswho",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM);
                                 }
-                              },
-                              text: "Choose From Device",
-                            ),
-                            SizedBox(height: 10.0),
-                            Text(
-                              "Load from Web Database:",
-                              style: TextStyle(
-                                  fontSize: 22.0,
-                                  color: AppColors.copper,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ])),
-                  Divider(),
-                  snapshot.hasData && !snapshot.hasError
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                              ListView.separated(
-                                  separatorBuilder: (context, index) => Divider(
-                                        color: Colors.black,
-                                      ),
-                                  shrinkWrap: true,
-                                  itemBuilder: (BuildContext context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0, horizontal: 16.0),
-                                      child: DataChoiceCard(
-                                        name: snapshot.data[index],
-                                        onPressed: () async {
-                                          Map<String, dynamic> deck =
-                                              await getDeck(
-                                                  snapshot.data[index]);
-                                          startGame(deck);
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  itemCount: snapshot.data.length)
-                            ])
-                      : Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        )
-                ],
-              );
+                              }
+                            },
+                            text: "Choose From Device",
+                          ),
+                          SizedBox(height: 10.0),
+                          Text(
+                            "Load from Web Database:",
+                            style: TextStyle(
+                                fontSize: 22.0,
+                                color: AppColors.copper,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ])),
+                Divider(),
+                if (snapshot.hasData && !snapshot.hasError)
+                  ListView.separated(
+                      separatorBuilder: (context, index) => Divider(
+                            color: Colors.black,
+                          ),
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 16.0),
+                          child: DataChoiceCard(
+                            name: snapshot.data[index],
+                            onPressed: () async {
+                              Map<String, dynamic> deck =
+                                  await getDeck(snapshot.data[index]);
+                              startGame(deck);
+                            },
+                          ),
+                        );
+                      },
+                      itemCount: snapshot.data.length)
+                else
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+              ]);
             }));
   }
 
